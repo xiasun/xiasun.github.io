@@ -202,9 +202,9 @@
         
             
             <p>今天偶然被问起一个很简单的关于字符类型（Char）赋值的问题，突然有点懵逼，下面就总结一下c++中字符型赋值的情况（虽然没什么卵用）。<br>最基本的情况是下面这样的，直接赋一个字符（包括转义字符（Escape Sequences）），如下所示：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> c;</div><div class="line">c = <span class="string">'a'</span>;</div></pre></td></tr></table></figure></p>
-<p>转义字符中，两种情况比较特殊，一个是八进制（Octal），一个是十六进制（Hexadecimal）。<br>八进制值在“\”后面跟<em>不多于三个</em>八进制数字，表示该八进制数对应的ASCII字符。如果超过了三个数，则语法查验就会报错，如果八进制表示的值超过了255，则编译报错。<br>十六进制值在“\”后面跟<em>若干个</em>十六进制数字，表示该十六进制数对应的ASCII字符。如果十六进制表示的值超过了255，则编译报错。八进制和十六进制代码举例如下所示：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">c = '\100';   // @</div><div class="line">c = '\400';   // 八进制400 = 256，编译时报错</div><div class="line">c = '\1001';  // 语法检验就报错</div><div class="line"></div><div class="line">c = '\x0050'； // P</div><div class="line">c = ‘\x100’;  // 十六进制100 = 256，编译时报错</div></pre></td></tr></table></figure></p>
+<p>转义字符中，两种情况比较特殊，一个是八进制（Octal），一个是十六进制（Hexadecimal）。<br>八进制值在“\”后面跟<em>不多于三个</em>八进制数字，表示该八进制数对应的ASCII字符。如果超过了三个数，则语法查验就会报错，如果八进制表示的值超过了255，则编译报错。<br>十六进制值在“\”后面跟<em>若干个</em>十六进制数字，表示该十六进制数对应的ASCII字符。如果十六进制表示的值超过了255，则编译报错。八进制和十六进制代码举例如下所示：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">char c;</div><div class="line">c = '\100';   // @</div><div class="line">c = '\400';   // 八进制400 = 256，编译时报错</div><div class="line">c = '\1001';  // 语法检验就报错</div><div class="line"></div><div class="line">c = '\x0050'； // P</div><div class="line">c = ‘\x100’;  // 十六进制100 = 256，编译时报错</div></pre></td></tr></table></figure></p>
 <p>如果单引号里有不只一个字符，那么它就是一个实现定义值（Implementation-deﬁned Value），也就是在不同环境下有不同的实现结果，但实现方法必须被该环境的文档所指出。<br>我查询了微软的<a href="https://msdn.microsoft.com/en-us/library/69ze775t.aspx" target="_blank" rel="external">文档</a>，对于不只一个字符的情况，字符型的值将取最低位的一个字符（右边）。<br>而不只一个字符的情况，最多可以有<em>四个</em>字符（包括含八进制和十六进制在内的转义字符），如果超过四个字符则语法查验时报错。<br>那当八进制、十六进制混合在一起时，八进制的终止是“/”后的第一个超过八进制表示范围的数字（大于7），十六进制的终止是“/”后的第一个超过十六进制表示范围的数字（大于G）。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">c = 'abcd';     // d</div><div class="line"></div><div class="line">c = 'a\100c';   // c</div><div class="line">c = 'x\40b';    // b，此处b超过了八进制数范围，故八进制数位40，最低位字符为b</div><div class="line">c = 'b\3770';   // 0, 此处八进制达到了三位数，位377，最低位字符为0</div><div class="line">c = 'c\400c';   // 报错，此处八进制数值超过256范围</div><div class="line"></div><div class="line">c = 'd\x0050z'; // z，此处因为z超过了十六进制的数值范围，所以十六进制数为0050，最低位字符z</div><div class="line">c = 'e\x0050c'; // 报错，此处c没有超过十六进制数字范围，故此处十六进制数为0050c，超过了256的范围</div></pre></td></tr></table></figure></p>
-<p>最后还又一种类似八进制和十六进制的是通用字符名（Universal Character Names）”\u”后面跟四位，”\U”后面跟八位,表示十六进制数对应的ASCII字符，用法与八进制和十六进制差不多，但它们可以表达远超ASCII范围的字符。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">c = '\U00000041'; // A</div><div class="line">c = '\u0041';     // A</div></pre></td></tr></table></figure></p>
+<p>最后还又一种类似八进制和十六进制的是通用字符名（Universal Character Names）”\u”后面跟四位，”\U”后面跟八位,表示十六进制数对应的相关字符。用法与八进制和十六进制差不多，但它们可以表达远超ASCII范围的字符。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">c = '\U00000041'; // A</div><div class="line">c = '\u0041';     // A</div></pre></td></tr></table></figure></p>
 <p>以上便是我对C++字符型的一些探索，欢迎各位交流。</p>
 
         
@@ -216,7 +216,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2016/10/03/char-literals-cpp/" data-id="citv0mdjd0000z33pc0nq6dgs" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2016/10/03/char-literals-cpp/" data-id="citv0oyp600001c3pnqle4yd4" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -357,7 +357,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2016/09/21/ubuntu-ss-notes/" data-id="citv0mdjs0004z33p2qo0m9tg" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2016/09/21/ubuntu-ss-notes/" data-id="citv0oypo00041c3pqlxz0ull" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -502,7 +502,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2016/09/11/first-day-zju/" data-id="citv0mdjh0001z33p9g2z7uir" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2016/09/11/first-day-zju/" data-id="citv0oypb00011c3pga7vated" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -632,7 +632,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2016/09/10/hello-world/" data-id="citv0mdjn0003z33pqg7z8ise" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2016/09/10/hello-world/" data-id="citv0oypi00031c3p8yegh5fz" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
