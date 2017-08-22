@@ -17,7 +17,7 @@
 <meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/workflow.png">
 <meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/one tooth.png">
 <meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/initial result.jpg">
-<meta property="og:updated_time" content="2017-08-22T06:04:07.718Z">
+<meta property="og:updated_time" content="2017-08-22T07:16:33.682Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A Summary CBCT Segmentation Platform Version 1.0">
 <meta name="twitter:description" content="In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT (kind of CT) images. The system is built with QT. I us">
@@ -214,16 +214,16 @@
             <p>In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT (kind of CT) images. The system is built with <a href="https://www.qt.io" target="_blank" rel="external">QT</a>. I used <a href="http://www.vtk.org/" target="_blank" rel="external">VTK</a> for visualization related functions and <a href="http://opencv.org/" target="_blank" rel="external">OpenCV</a> for image processing.</p>
 <h2 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h2><p>This platform is built as a QT widget application, with <code>QVTKWidgets</code> integrated, we could use VTK inside the QT framework.</p>
 <p>I use <code>vtkDicomReader</code> to read DICOM images by selecting a directory, the data is read as <code>vtkImageData</code>. I use <code>vtkImageViewer2</code> to render slices. The <code>vtkImageViewer2</code> is suitable for display 3d image by slice view, by setting view orientation and slice ID, we can have a good view of CBCT data. Below is the overall interface of the software, you can see three different view of the 3D CBCT data.</p>
-<p><img src="2017/08/21/teeth-seg-version-1-notes/overall.png" width="75%" height="75%" alt="Overall interface of the software" title="Overall interface of the software"></p>
+<p><img src="/2017/08/21/teeth-seg-version-1-notes/overall.png" width="75%" height="75%" alt="Overall interface of the software" title="Overall interface of the software"></p>
 <p>Since the initial data is of 3 dimensions, I slice it into a series of 2D images for easy processing afterward.</p>
 <p>I use <code>vtkContourWidget</code> to let users select region of interests (ROI) on an initial slice, ROI means the rough bounding box of a tooth. Initial slice is commonly a slice with a clear boundary of each tooth. Below is a figure to select ROI of an initial slice.</p>
-<p><img src="2017/08/21/teeth-seg-version-1-notes/select roi.png" width="75%" height="75%" alt="Select ROI of initial slice" title="Select ROI of initial slice"></p>
+<p><img src="/2017/08/21/teeth-seg-version-1-notes/select roi.png" width="75%" height="75%" alt="Select ROI of initial slice" title="Select ROI of initial slice"></p>
 <p>After picking up an ROI, segmentation procedures are started. The contour will shrink from ROI (the initial contour), iterate and iterate towards the boundary of a tooth. The last iterate contour is considered to be the segmentation results, or to say the boundary of selected tooth. Below is the segmentation result of a tooth of one slice.</p>
-<p><img src="2017/08/21/teeth-seg-version-1-notes/seg process.png" width="75%" height="75%" alt="Segmentation result of one slice" title="Segmentation result of one slice"></p>
+<p><img src="/2017/08/21/teeth-seg-version-1-notes/seg process.png" width="75%" height="75%" alt="Segmentation result of one slice" title="Segmentation result of one slice"></p>
 <p>When the boundary of a tooth in slice N is found, I push this <code>vtkContourWidget</code> into a vector, convert it into a binary image and save it with ID to a specific directory. And this contour is enlarged for 1 or 2 pixels by some kind of <code>dilate</code> algorithm, it is used as the initial contour of next slice, next could be either upper or lower, then the segmentation procedures are looped. See the looping figure among slices below.</p>
-<p><img src="2017/08/21/teeth-seg-version-1-notes/workflow.png" width="75%" height="75%" alt="Looping process among slices" title="Looping process among slices"></p>
+<p><img src="/2017/08/21/teeth-seg-version-1-notes/workflow.png" width="75%" height="75%" alt="Looping process among slices" title="Looping process among slices"></p>
 <p>After segmentations of all slices are done, I read all the binary images from workspace with id order to form a 3D image data, and use <code>vtkImageMarchingCubes</code> to reconstruct the 3D model of it. The STL model is exported with <code>vtkSTLWriter</code>. The reconstructed model of one tooth and all lower teeth are shown below.</p>
-<p><img src="2017/08/21/teeth-seg-version-1-notes/one tooth.png" width="75%" height="75%" alt="Reconstructed tooth model" title="One reconstructed tooth model"><br><img src="2017/08/21/teeth-seg-version-1-notes/initial result.jpg" width="75%" height="75%" alt="Reconstructed tooth model" title="Fourteen reconstructed tooth model"></p>
+<p><img src="/2017/08/21/teeth-seg-version-1-notes/one tooth.png" width="75%" height="75%" alt="Reconstructed tooth model" title="One reconstructed tooth model"><br><img src="/2017/08/21/teeth-seg-version-1-notes/initial result.jpg" width="75%" height="75%" alt="Reconstructed tooth model" title="Fourteen reconstructed tooth model"></p>
 <h2 id="Segmentation-Algorithm"><a href="#Segmentation-Algorithm" class="headerlink" title="Segmentation Algorithm"></a>Segmentation Algorithm</h2><p>An enhanced level-set method is introduced as segmentation algorithm of 2D image slice. The base of this algorithm is <a href="http://www.imagecomputing.org/~cmli/DRLSE/" target="_blank" rel="external">DRLSE</a> introduced by Prof. Chunming Li. I add a shape constraint on its energy function, which makes the contour of current slice not too far away from the previous one.</p>
 <p>When it comes to the root parts, I design a thresholding method to remove some extra parts between roots. This method is not robust yet so I am not going to explain in detail.</p>
 <h2 id="Acceleration"><a href="#Acceleration" class="headerlink" title="Acceleration"></a>Acceleration</h2><p>Level-set method is based on iterated shrinking or expanding of initial contours so it might be extremely slow with a fixed iteration times. I calculate the area difference of current slice and previous slice, if this difference is small enough, then the iteration is stopped.</p>
@@ -247,7 +247,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/" data-id="cj6n8rpdj00058g3p1pzucadk" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/" data-id="cj6n9r4q10008m43p8qmz8l00" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
