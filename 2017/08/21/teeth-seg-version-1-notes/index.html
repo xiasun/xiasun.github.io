@@ -3,21 +3,25 @@
 <head>
     <meta charset="utf-8">
     
-    <title>迟到的2017 | Hello 2017 (Hope Not Too Late) | Summer News</title>
+    <title>A Summary CBCT Segmentation Platform Version 1.0 | Summer News</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="惊恐的发现2017年的四分之一已经过去了，读研也半年了，擦擦擦，说好的开始写博客整理遇到的问题呢？！
-过去的2016，主要在上课，这学期就只剩中特和老板的课了（小金刚保佑我的计算理论），假期玩得比较嗨，二月三月按部就班的写代码，也没发生什么特别的，CT图像分割弄了个无比纠结的框架，VTK+OpenCV，交互一塌糊涂跑起来还慢得要命，讲道理这块要做的还有好多，摔！唯一的好消息是，丹顺利录取了南师大。">
+    <meta name="description" content="In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT images. The system is built with QT. I used VTK for vi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="迟到的2017 | Hello 2017 (Hope Not Too Late)">
-<meta property="og:url" content="http://yoursite.com/2017/04/08/late-hello-2017/index.html">
+<meta property="og:title" content="A Summary CBCT Segmentation Platform Version 1.0">
+<meta property="og:url" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/index.html">
 <meta property="og:site_name" content="Summer News">
-<meta property="og:description" content="惊恐的发现2017年的四分之一已经过去了，读研也半年了，擦擦擦，说好的开始写博客整理遇到的问题呢？！
-过去的2016，主要在上课，这学期就只剩中特和老板的课了（小金刚保佑我的计算理论），假期玩得比较嗨，二月三月按部就班的写代码，也没发生什么特别的，CT图像分割弄了个无比纠结的框架，VTK+OpenCV，交互一塌糊涂跑起来还慢得要命，讲道理这块要做的还有好多，摔！唯一的好消息是，丹顺利录取了南师大。">
-<meta property="og:updated_time" content="2017-04-08T11:41:14.505Z">
+<meta property="og:description" content="In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT images. The system is built with QT. I used VTK for vi">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/overall.png">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/select roi.png">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/seg process.png">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/workflow.png">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/one tooth.png">
+<meta property="og:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/initial result.jpg">
+<meta property="og:updated_time" content="2017-08-22T05:49:22.954Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="迟到的2017 | Hello 2017 (Hope Not Too Late)">
-<meta name="twitter:description" content="惊恐的发现2017年的四分之一已经过去了，读研也半年了，擦擦擦，说好的开始写博客整理遇到的问题呢？！
-过去的2016，主要在上课，这学期就只剩中特和老板的课了（小金刚保佑我的计算理论），假期玩得比较嗨，二月三月按部就班的写代码，也没发生什么特别的，CT图像分割弄了个无比纠结的框架，VTK+OpenCV，交互一塌糊涂跑起来还慢得要命，讲道理这块要做的还有好多，摔！唯一的好消息是，丹顺利录取了南师大。">
+<meta name="twitter:title" content="A Summary CBCT Segmentation Platform Version 1.0">
+<meta name="twitter:description" content="In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT images. The system is built with QT. I used VTK for vi">
+<meta name="twitter:image" content="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/overall.png">
     
 
     
@@ -169,7 +173,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-late-hello-2017" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-teeth-seg-version-1-notes" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -177,7 +181,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            迟到的2017 | Hello 2017 (Hope Not Too Late)
+            A Summary CBCT Segmentation Platform Version 1.0
         </h1>
     
 
@@ -186,8 +190,8 @@
                         
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2017/04/08/late-hello-2017/">
-            <time datetime="2017-04-08T11:07:05.000Z" itemprop="datePublished">2017-04-08</time>
+        <a href="/2017/08/21/teeth-seg-version-1-notes/">
+            <time datetime="2017-08-21T01:07:40.000Z" itemprop="datePublished">2017-08-21</time>
         </a>
     </div>
 
@@ -196,7 +200,7 @@
                         
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/碎碎念/">碎碎念</a>
+        <a class="tag-link" href="/tags/C/">C++</a>, <a class="tag-link" href="/tags/Image-Segmentation/">Image Segmentation</a>, <a class="tag-link" href="/tags/OpenCV/">OpenCV</a>, <a class="tag-link" href="/tags/QT/">QT</a>, <a class="tag-link" href="/tags/VTK/">VTK</a>
     </div>
 
                     </div>
@@ -207,17 +211,32 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>惊恐的发现2017年的四分之一已经过去了，读研也半年了，擦擦擦，说好的开始写博客整理遇到的问题呢？！</p>
-<p>过去的2016，主要在上课，这学期就只剩中特和老板的课了（小金刚保佑我的计算理论），假期玩得比较嗨，二月三月按部就班的写代码，也没发生什么特别的，CT图像分割弄了个无比纠结的框架，VTK+OpenCV，交互一塌糊涂跑起来还慢得要命，讲道理这块要做的还有好多，摔！唯一的好消息是，丹顺利录取了南师大。哦还有托钱师兄的福换到了翠柏的宿舍。</p>
-<p>接下来想想事情好多呀，首先要搞牙了，想到要拔四颗心里还是很慌，争取4月份带上牙套拔。然后图像分割这块科研和工程还是要两手抓，这是个长期的工作，现在的进度实在伤不起，我也想做个可用性强一点，功能合理一点的产品，算法改进改进争取发个paper。春季课程结束了，也该考虑要不要去老板公司多挣点钱了，反正在实验室也是做牙齿，在公司也是做牙齿。健身啊健身，真的要成为每天的功课，身体比学位重要。</p>
-<p>最后，希望能经常整理整理遇到的问题，发到这里来，上学期有上课的理由，这学期真不能偷懒了。再过一年我也要开始找工作了，各方面知识真心要系统的准备准备。</p>
-<p>学而不思则罔，思而不学则怠。以前觉得初中语文课本学的这句话又土又没逼格，现在看看真是贼有道理。</p>
-<p>@杭州</p>
+            <p>In the past six months, I was working on designing and developing a Windows desktop software, for teeth segmentation and reconstruction from CBCT images. The system is built with <a href="https://www.qt.io" target="_blank" rel="external">QT</a>. I used <a href="http://www.vtk.org/" target="_blank" rel="external">VTK</a> for visualization related functions and <a href="http://opencv.org/" target="_blank" rel="external">OpenCV</a> for image processing.</p>
+<h2 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h2><p>This platform is built as a QT widget application, with <code>QVTKWidgets</code> integrated, we could use VTK inside the QT framework.</p>
+<p>I use <code>vtkDicomReader</code> to read DICOM images by selecting a directory, the data is read as <code>vtkImageData</code>. I use <code>vtkImageViewer2</code> to render slices. The <code>vtkImageViewer2</code> is suitable for display 3d image by slice view, by setting view orientation and slice ID, we can have a good view of CBCT data. Below is the overall interface of the software, you can see three different view of the 3D CBCT data.</p>
+<p><img src="2017/08/21/teeth-seg-version-1-notes/overall.png" width="75%" height="75%" alt="Overall interface of the software" title="Overall interface of the software"></p>
+<p>Since the initial data is of 3 dimensions, I slice it into a series of 2D images for easy processing afterward.</p>
+<p>I use <code>vtkContourWidget</code> to let users select region of interests (ROI) on an initial slice, ROI means the rough bounding box of a tooth. Initial slice is commonly a slice with a clear boundary of each tooth. Below is a figure to select ROI of an initial slice.</p>
+<p><img src="2017/08/21/teeth-seg-version-1-notes/select roi.png" width="75%" height="75%" alt="Select ROI of initial slice" title="Select ROI of initial slice"></p>
+<p>After picking up an ROI, segmentation procedures are started. The contour will shrink from ROI (the initial contour), iterate and iterate towards the boundary of a tooth. The last iterate contour is considered to be the segmentation results, or to say the boundary of selected tooth. Below is the segmentation result of a tooth of one slice.</p>
+<p><img src="2017/08/21/teeth-seg-version-1-notes/seg process.png" width="75%" height="75%" alt="Segmentation result of one slice" title="Segmentation result of one slice"></p>
+<p>When the boundary of a tooth in slice N is found, I push this <code>vtkContourWidget</code> into a vector, convert it into a binary image and save it with ID to a specific directory. And this contour is enlarged for 1 or 2 pixels by some kind of <code>dilate</code> algorithm, it is used as the initial contour of next slice, next could be either upper or lower, then the segmentation procedures are looped. See the looping figure among slices below.</p>
+<p><img src="2017/08/21/teeth-seg-version-1-notes/workflow.png" width="75%" height="75%" alt="Looping process among slices" title="Looping process among slices"></p>
+<p>After segmentations of all slices are done, I read all the binary images from workspace with id order to form a 3D image data, and use <code>vtkImageMarchingCubes</code> to reconstruct the 3D model of it. The STL model is exported with <code>vtkSTLWriter</code>. The reconstructed model of one tooth and all lower teeth are shown below.</p>
+<p><img src="2017/08/21/teeth-seg-version-1-notes/one tooth.png" width="75%" height="75%" alt="Reconstructed tooth model" title="One reconstructed tooth model"><br><img src="2017/08/21/teeth-seg-version-1-notes/initial result.jpg" width="75%" height="75%" alt="Reconstructed tooth model" title="Fourteen reconstructed tooth model"></p>
+<h2 id="Segmentation-Algorithm"><a href="#Segmentation-Algorithm" class="headerlink" title="Segmentation Algorithm"></a>Segmentation Algorithm</h2><p>An enhanced level-set method is introduced as segmentation algorithm of 2D image slice. The base of this algorithm is <a href="http://www.imagecomputing.org/~cmli/DRLSE/" target="_blank" rel="external">DRLSE</a> introduced by Prof. Chunming Li. I add a shape constraint on its energy function, which makes the contour of current slice not too far away from the previous one.</p>
+<p>When it comes to the root parts, I design a thresholding method to remove some extra parts between roots. This method is not robust yet so I am not going to explain in detail.</p>
+<h2 id="Acceleration"><a href="#Acceleration" class="headerlink" title="Acceleration"></a>Acceleration</h2><p>Level-set method is based on iterated shrinking or expanding of initial contours so it might be extremely slow with a fixed iteration times. I calculate the area difference of current slice and previous slice, if this difference is small enough, then the iteration is stopped.</p>
+<p>I use OpenCV’s CUDA module to accelerate the calculation. The overall system has no parallel structure at all, so I can just speed up Matrix calculation with GPU. Most image processing methods do have a CUDA implementation, so I use them to rewrite the code, and speed is up to 10 times of the origin GPU version.</p>
+<h2 id="Future-Improvements"><a href="#Future-Improvements" class="headerlink" title="Future Improvements"></a>Future Improvements</h2><p>There are several problems remained in the current system.</p>
+<p>First, VTK is actually not that useful for my feature requirements. I will have to convert data structures between OpenCV <code>Mat</code>, <code>vtkImageData</code> and <code>vtkContourWidget</code> for every iteration. So I will try to remove VTK from my system or use it only in few specific conditions.</p>
+<p>Second, current GPU acceleration only supports NVIDIA GPUs, some kind of AMD support is also required.</p>
+<p>Finally, the segmentation algorithm is not robust enough to fit data from different parts, different people, and different devices. Especially for the teeth crown adjacency. I also want to do some machine learning based improvements for the algorithm, this could be possible after data collection from current software for some time.</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="http://vtk.1045678.n5.nabble.com/" target="_blank" rel="external">VTK User List: </a> This is the mailing lists for VTK users and developers, email subscribing is required.<br><a href="http://answers.opencv.org/questions/" target="_blank" rel="external">OpenCV Questions: </a> This is a QA community of OpenCV, just like a small StackOverflow.</p>
+<p>Actually, the above two communities are of really low popularity, you may get very few responses to your posts. But some historical problems do deserve some attentions.</p>
+<p><a href="http://www.imagecomputing.org/~cmli/" target="_blank" rel="external">Professor Li Chunming: </a> His work on image segmentation is of very high citation with very nice demo MATLAB code.</p>
 <hr>
-<h5 id="English-version"><a href="#English-version" class="headerlink" title="English version:"></a>English version:</h5><p>Being so idle for the last half year since I entered graduate school last year. I discover to my horror that a quarter of year 2017 has been wasted. I have to start blogging, for knowledge and skills I met.</p>
-<p>Currently the CBCT segmentation project has a rough model but there still remains a lot to do, both in research and development. I hope I could make this software easy to use and strong enough in functionality, and I also wish I could post a paper in the topic of 3d image segmentation.</p>
-<p>Learning without thought is labor lost, thought without learning is idle. This Confucius sentence really make sense.</p>
-<p>@Hangzhou</p>
+<p>@Wonju, South Korea</p>
 
         
         </div>
@@ -228,7 +247,7 @@
 
 </div>
 
-    <a data-url="http://yoursite.com/2017/04/08/late-hello-2017/" data-id="cj6liip0e0005zk3pa9z8bzo7" class="article-share-link"><i class="fa fa-share"></i>Share</a>
+    <a data-url="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/" data-id="cj6liau2m0000vh3patrdixtd" class="article-share-link"><i class="fa fa-share"></i>Share</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -296,7 +315,7 @@
 
             
     
-        <a href="http://yoursite.com/2017/04/08/late-hello-2017/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://yoursite.com/2017/04/08/late-hello-2017/">Comments</a>
+        <a href="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/">Comments</a>
     
 
         </footer>
@@ -305,19 +324,10 @@
         
 <nav id="article-nav">
     
-        <a href="/2017/08/21/teeth-seg-version-1-notes/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">Newer</strong>
-            <div class="article-nav-title">
-                
-                    A Summary CBCT Segmentation Platform Version 1.0
-                
-            </div>
-        </a>
     
-    
-        <a href="/2016/10/29/post-img-conf/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2017/04/08/late-hello-2017/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title">Hexo Asset Folders Tricks</div>
+            <div class="article-nav-title">迟到的2017 | Hello 2017 (Hope Not Too Late)</div>
         </a>
     
 </nav>
@@ -510,9 +520,9 @@
     <script>
     var disqus_config = function () {
         
-            this.page.url = 'http://yoursite.com/2017/04/08/late-hello-2017/';
+            this.page.url = 'http://yoursite.com/2017/08/21/teeth-seg-version-1-notes/';
         
-        this.page.identifier = 'late-hello-2017';
+        this.page.identifier = 'teeth-seg-version-1-notes';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
