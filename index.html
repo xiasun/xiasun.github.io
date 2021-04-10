@@ -34,7 +34,9 @@
 <link rel="stylesheet" href="/%02.css">
 <link rel="stylesheet" href="/.css">
 
-<meta name="generator" content="Hexo 5.2.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.2.0"></head>
 
   <body>
     <header>
@@ -76,6 +78,66 @@
     </header>
     <div id="container">
       <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/03/06/left-right-handed-conversion/" title="左右手坐标系转换" itemprop="url">左右手坐标系转换</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2021-03-06T02:50:24.000Z" itemprop="datePublished"> 发表于 2021-03-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>右手食指为Y轴正方向，中指为Z轴正方向，大拇指为X轴正方向，这样的坐标系为右手坐标系。左手则为左手坐标系。将一个坐标系的一个轴取反向，则改变了手性；两个轴取反向，则等价于绕第三轴旋转180度；将三个轴都取反向，则是前面两者的叠加，改变手性+旋转。</p>
+<p>左右手坐标系的转换在图形学开发中经常出现，例如OpenGL使用右手坐标系，Unity使用左手坐标系。下文讨论我们以这两个坐标系为例。</p>
+<img src="/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png" class="" title="GLAD配置页">
+
+
+<h2 id="位置变换"><a href="#位置变换" class="headerlink" title="位置变换"></a>位置变换</h2><p>$ax + by + cz = 0$</p>
+<h2 id="旋转变换"><a href="#旋转变换" class="headerlink" title="旋转变换"></a>旋转变换</h2>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Graphics/">Graphics</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
 
    
     
@@ -225,15 +287,15 @@
 		<ul class="clearfix">
 		
 			
+				<li><a href="/tags/Graphics/" title="Graphics">Graphics<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/OpenGL/" title="OpenGL">OpenGL<sup>1</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Graphics/" title="Graphics">Graphics<sup>1</sup></a></li>
 			
 		
 			
@@ -414,6 +476,35 @@ var _hmt = _hmt || [];
 
 <!-- MathJax Begin -->
 <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 
 
 <!-- MathJax End -->
