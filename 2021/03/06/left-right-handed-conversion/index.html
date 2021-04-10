@@ -11,16 +11,16 @@
     
 
     
-    <meta name="description" content="太长不看右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \cdo">
+    <meta name="description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="左右手坐标系下旋转平移的转换">
 <meta property="og:url" content="http://example.com/2021/03/06/left-right-handed-conversion/index.html">
 <meta property="og:site_name" content="我热爱学习">
-<meta property="og:description" content="太长不看右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \cdo">
+<meta property="og:description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png">
 <meta property="article:published_time" content="2021-03-06T02:50:24.000Z">
-<meta property="article:modified_time" content="2021-04-10T13:49:52.748Z">
+<meta property="article:modified_time" content="2021-04-10T14:02:42.279Z">
 <meta property="article:author" content="Summer">
 <meta property="article:tag" content="Graphics">
 <meta name="twitter:card" content="summary">
@@ -108,7 +108,7 @@
 		
 		</div>
 		
-		<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S = \begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}$，则有<br>$$<br>R = S \cdot R^{’} \cdot S \\<br>T = S \cdot T^{’}<br>$$</p>
+		<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S = \begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}$，则有<br>$$<br>R = S \cdot R^{’} \cdot S \\<br>T = S \cdot T^{’}<br>$$</p>
 <h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><p>右手食指为Y轴正方向，中指为Z轴正方向，大拇指为X轴正方向，这样的坐标系为右手坐标系。右手换成左手则为左手坐标系。将一个坐标系的一个轴取反向，则改变了手性；两个轴取反向，则等价于绕第三轴旋转180度；将三个轴都取反向，则是前面两者的叠加，改变手性+旋转。</p>
 <p>左右手坐标系的转换在图形学开发中经常出现，例如OpenGL使用右手坐标系，Unity使用左手坐标系。下文所述右手坐标系即是OpenGL坐标系，左手坐标系即是Unity坐标系。</p>
 <img src="/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png" class="" title="左右手坐标系示意图">
