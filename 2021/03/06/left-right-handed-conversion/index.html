@@ -1,0 +1,505 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>左右手坐标系下旋转平移的转换 | 我热爱学习</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Summer">
+    
+
+    
+    <meta name="description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="左右手坐标系下旋转平移的转换">
+<meta property="og:url" content="http://example.com/2021/03/06/left-right-handed-conversion/index.html">
+<meta property="og:site_name" content="我热爱学习">
+<meta property="og:description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png">
+<meta property="article:published_time" content="2021-03-06T02:50:24.000Z">
+<meta property="article:modified_time" content="2022-05-22T06:04:56.707Z">
+<meta property="article:author" content="Summer">
+<meta property="article:tag" content="Graphics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="我热爱学习" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.2"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="我热爱学习" title="我热爱学习"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="我热爱学习">我热爱学习</a></h1>
+				<h2 class="blog-motto">学习使我快乐</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:example.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/03/06/left-right-handed-conversion/" title="左右手坐标系下旋转平移的转换" itemprop="url">左右手坐标系下旋转平移的转换</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2021-03-06T02:50:24.000Z" itemprop="datePublished"> 发表于 2021-03-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="toc-number">1.</span> <span class="toc-text">太长不看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E5%AF%BC"><span class="toc-number">2.</span> <span class="toc-text">推导</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S = \begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}$，则有<br>$$<br>R = S \cdot R^{’} \cdot S \\<br>T = S \cdot T^{’}<br>$$</p>
+<h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><p>右手食指为Y轴正方向，中指为Z轴正方向，大拇指为X轴正方向，这样的坐标系为右手坐标系。右手换成左手则为左手坐标系。将一个坐标系的一个轴取反向，则改变了手性；两个轴取反向，则等价于绕第三轴旋转180度；将三个轴都取反向，则是前面两者的叠加，改变手性+旋转。</p>
+<p>左右手坐标系的转换在图形学开发中经常出现，例如OpenGL使用右手坐标系，Unity使用左手坐标系。下文所述右手坐标系即是OpenGL坐标系，左手坐标系即是Unity坐标系。</p>
+<img src="/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png" class="" title="左右手坐标系示意图">
+
+<p>左手坐标系下有一个点$P_l=(x,y,z)^T$，则在右手坐标系下，该点应该表示为$P_r=(-x,y,z)^T$。</p>
+<p>假设空间中有变换矩阵<br>$$S=\begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}=S^{-1}$$</p>
+<p>则左右手坐标系下点的变换即可用$S$来表示，即<br>$$<br>P_l = S \cdot P_r \\<br>P_r = S \cdot P_l<br>$$</p>
+<p>假设空间中有旋转矩阵$R$和平移向量$T$，世界坐标系下有点$P_w$，对应相机坐标系下有点$P_c$，则有<br>$$<br>P_c = R \cdot P_w + T<br>$$</p>
+<p>假设$P_c$、$P_w$、$R$、$T$均定义在右手坐标系下，${P_c}^{’}$、${P_w}^{’}$、${R}^{’}$、${T}^{’}$分别为上述变量在左手坐标系下的定义，即<br>$$<br>P_c = R \cdot P_w + T \\<br>{P_c}^{’} = {R}^{’} \cdot {P_w}^{’} + {T}^{’}<br>$$</p>
+<p>左右手坐标系下位置的变换我们已经知道，即${P}^{’}=S \cdot P$，则有<br>$$<br>{P_c}^{’} = {R}^{’} \cdot {P_w}^{’} + {T}^{’} \rightarrow \\<br>S \cdot {P_c} = {R}^{’} \cdot S \cdot {P_w} + {T}^{’} \rightarrow \\<br>{P_c} = {S}^{-1} \cdot {R}^{’} \cdot S \cdot {P_w} + {S}^{-1} \cdot {T}^{’}<br>$$</p>
+<p>已知右手坐标系下$P_c = R \cdot P_w + T$，故有左右手坐标系下旋转矩阵和平移向量的的转换<br>$$<br>R = S^{-1} \cdot R^{’} \cdot S = S \cdot R^{’} \cdot S \\<br>T = S^{-1} \cdot {T}^{’} = S \cdot {T}^{’}<br>$$</p>
+<p>以上</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Graphics/">Graphics</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://example.com/2021/03/06/left-right-handed-conversion/" data-title="左右手坐标系下旋转平移的转换 | 我热爱学习" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/22/proj-mat/" title="proj-mat">
+  <strong>上一篇：</strong><br/>
+  <span>
+  proj-mat</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/02/21/vscode-cpp-dev-ubuntu/"  title="Ubuntu搭建OpenGL/C++开发环境">
+ <strong>下一篇：</strong><br/> 
+ <span>Ubuntu搭建OpenGL/C++开发环境
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="toc-number">1.</span> <span class="toc-text">太长不看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E5%AF%BC"><span class="toc-number">2.</span> <span class="toc-text">推导</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Graphics/" title="Graphics">Graphics<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/OpenGL/" title="OpenGL">OpenGL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m Summer Sun. <br/>
+			I&#39;m fine thank you, and you?</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xiasun" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
+		
+		<a href="/about" target="_blank" title="Summer">Summer</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

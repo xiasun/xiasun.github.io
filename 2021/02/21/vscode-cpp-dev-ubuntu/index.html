@@ -1,0 +1,568 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Ubuntu搭建OpenGL/C++开发环境 | 我热爱学习</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Summer">
+    
+
+    
+    <meta name="description" content="最近做一个跨平台的绘制项目，尝试在Ubuntu上搭建C++的OpenGL开发环境，在这里把一些过程记录一下。  OpenGL工具库：GLAD+GLFW 项目构建：CMake 编辑&#x2F;调试：VSCode 实现Demo：Hello Triangle - Learn OpenGL(中文&#x2F;英文)，完整代码  基本C++环境搭建 安装编译工具，build-essential包括gcc，g++，make在内的编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu搭建OpenGL&#x2F;C++开发环境">
+<meta property="og:url" content="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/index.html">
+<meta property="og:site_name" content="我热爱学习">
+<meta property="og:description" content="最近做一个跨平台的绘制项目，尝试在Ubuntu上搭建C++的OpenGL开发环境，在这里把一些过程记录一下。  OpenGL工具库：GLAD+GLFW 项目构建：CMake 编辑&#x2F;调试：VSCode 实现Demo：Hello Triangle - Learn OpenGL(中文&#x2F;英文)，完整代码  基本C++环境搭建 安装编译工具，build-essential包括gcc，g++，make在内的编">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/glfw-simple-demo.png">
+<meta property="og:image" content="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/glad-download-page.png">
+<meta property="og:image" content="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/hello-triangle-demo.png">
+<meta property="article:published_time" content="2021-02-21T02:52:00.000Z">
+<meta property="article:modified_time" content="2022-05-22T06:04:56.708Z">
+<meta property="article:author" content="Summer">
+<meta property="article:tag" content="Graphics">
+<meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Ubuntu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/glfw-simple-demo.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="我热爱学习" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.2"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="我热爱学习" title="我热爱学习"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="我热爱学习">我热爱学习</a></h1>
+				<h2 class="blog-motto">学习使我快乐</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:example.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/02/21/vscode-cpp-dev-ubuntu/" title="Ubuntu搭建OpenGL/C++开发环境" itemprop="url">Ubuntu搭建OpenGL/C++开发环境</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2021-02-21T02:52:00.000Z" itemprop="datePublished"> 发表于 2021-02-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%ACC-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">基本C++环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%ACOpenGL%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">基本OpenGL开发环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hello-Triangle"><span class="toc-number">3.</span> <span class="toc-text">Hello Triangle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debugging-Tricks"><span class="toc-number">4.</span> <span class="toc-text">Debugging Tricks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近做一个跨平台的绘制项目，尝试在Ubuntu上搭建C++的OpenGL开发环境，在这里把一些过程记录一下。</p>
+<ul>
+<li>OpenGL工具库：GLAD+GLFW</li>
+<li>项目构建：CMake</li>
+<li>编辑/调试：VSCode</li>
+<li>实现Demo：Hello Triangle - Learn OpenGL(<a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/01%20Getting%20started/04%20Hello%20Triangle/">中文</a>/<a target="_blank" rel="noopener" href="https://learnopengl.com/Getting-started/Hello-Triangle">英文</a>)，<a target="_blank" rel="noopener" href="https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/2.2.hello_triangle_indexed/hello_triangle_indexed.cpp">完整代码</a></li>
+</ul>
+<h2 id="基本C-环境搭建"><a href="#基本C-环境搭建" class="headerlink" title="基本C++环境搭建"></a>基本C++环境搭建</h2><ol>
+<li><p>安装编译工具，build-essential包括gcc，g++，make在内的编译器和工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install build-essential</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装CMake，跨平台构建工程比较方便</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install cmake</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建C++基本工程<br>创建一个项目路径HelloTriangle，在其之下创建源文件路径src和build路径。在src下创建代码文件main.cpp，写个Hello World</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Hello Triangle&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在HelloTriangle根目录下创建CMakeLists.txt，为方便补全，可以安装VSCode的CMake插件和CMake Tools插件</p>
+</li>
+<li><p>CMakeLists.txt填入以下配置内容</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.6</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(HelloTriangle</span><br><span class="line">    src/main.cpp</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>此时，项目路径如下图所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── build</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">└── src</span><br><span class="line">    └── main.cpp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入build路径，运行cmake，在build路径下生成Makefile，然后运行make，生成HelloTriangle可执行文件，运行即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd build</span><br><span class="line">cmake ../       # 运行cmake生成Makefile</span><br><span class="line">make            # 运行make生成可执行文件</span><br><span class="line">./HelloTriangle # 运行</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>至此，基本C++环境已经配好，接下来开始配置OpenGL的开发环境。</p>
+<h2 id="基本OpenGL开发环境配置"><a href="#基本OpenGL开发环境配置" class="headerlink" title="基本OpenGL开发环境配置"></a>基本OpenGL开发环境配置</h2><ol>
+<li><p>安装GLFW，下载<a target="_blank" rel="noopener" href="https://www.glfw.org/">GLFW源码</a>，解压至任意路径，进行构建和安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 视情况apt安装如下工具库，缺的话再补</span></span><br><span class="line">sudo apt install libglfw3 libglfw3-dev glibc-doc libxmu-dev libxrandr-dev doxygen libsdl2-dev</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 构建工程 &amp; 安装</span></span><br><span class="line">cd glfw-3.3.3 &amp;&amp; mkdir build &amp;&amp; cd build</span><br><span class="line">cmake ../</span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 运行simple程序，若绘制出旋转的三角形则安装已完成</span></span><br><span class="line">./examples/simple</span><br></pre></td></tr></table></figure>
+<img src="/2021/02/21/vscode-cpp-dev-ubuntu/glfw-simple-demo.png" class="" title="GLFW示例demo">
+</li>
+<li><p>查询设备OpenGL版本，以选择合适版本的GLAD库，这里输出的是4.6</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glxinfo | grep &quot;OpenGL version&quot;</span><br><span class="line">输出示例：OpenGL version string: 4.6 (Compatibility Profile) Mesa 20.0.8</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>安装GLAD，用于在运行时动态获取设备的OpenGL接口函数， 进入<a target="_blank" rel="noopener" href="https://glad.dav1d.de/">GLAD生成页面</a>，选取Language、Specification、API - gl、Profile，勾选Generate a loader，然后点击右下角Generate，在新页面中下载glad.zip，解压至任意位置，后续在工程中配置</li>
+</ol>
+<img src="/2021/02/21/vscode-cpp-dev-ubuntu/glad-download-page.png" class="" title="GLAD配置页">
+
+<p>至此，基本OpenGL开发环境已经配置好，接下来开始配置Hello Triangle的工程代码。</p>
+<h2 id="Hello-Triangle"><a href="#Hello-Triangle" class="headerlink" title="Hello Triangle"></a>Hello Triangle</h2><ol>
+<li><p>将<a target="_blank" rel="noopener" href="https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/2.2.hello_triangle_indexed/hello_triangle_indexed.cpp">HelloTriangle示例代码</a>贴入之前创建的main.cpp，如果编辑器提示有语法错误先暂时忽略。</p>
+</li>
+<li><p>修改CMakeLists.txt文件，增加glad.c为源文件，引用glad的include路径，并连接glfw3和OpenGL，完整CMakeLists.txt如下</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.6</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(HelloTriangle)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(HelloTriangle</span><br><span class="line">    src/main.cpp</span><br><span class="line">    /home/summersun/Projects/glad/src/glad.c <span class="comment"># 新增源文件</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(</span><br><span class="line">    /home/summersun/Projects/glad/<span class="keyword">include</span>    <span class="comment"># 新增include</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 链接glfw</span></span><br><span class="line"><span class="keyword">find_package</span>(glfw3 <span class="number">3.3</span> REQUIRED)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(HelloTriangle </span><br><span class="line">    glfw</span><br><span class="line">    <span class="variable">$&#123;CMAKE_DL_LIBS&#125;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 链接opengl</span></span><br><span class="line"><span class="keyword">find_package</span>(OpenGL REQUIRED)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(HelloTriangle OpenGL::GL)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回到HelloTriangle/build路径下，依次构建和编译工程，并运行即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmake ../ &amp;&amp; make</span><br><span class="line">./HelloTriangle # 运行HelloTriangle</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<img src="/2021/02/21/vscode-cpp-dev-ubuntu/hello-triangle-demo.png" class="" title="HelloTriangle">
+
+<h2 id="Debugging-Tricks"><a href="#Debugging-Tricks" class="headerlink" title="Debugging Tricks"></a>Debugging Tricks</h2><ol>
+<li><p>代码补全、语法提示？</p>
+<p> 在VSCode安装<code>C/C++</code>插件以获取此能力</p>
+</li>
+<li><p>VSCode提示<code>glad/glad.h</code>头文件未找到，但可以正常编译运行？</p>
+<p>先在CMakeLists.txt中添加<code>set(CMAKE_EXPORT_COMPILE_COMMANDS YES)</code>定义，再次cmake时可以生成<code>compile_commands.json</code>文件，该文件记录了CMakeLists.txt中定义的头文件</p>
+<p>然后生成VSCode的配置文件c_cpp_properties.json文件，在其中加入compileCommands选项指向CMake刚生成的配置文件<code>&quot;compileCommands&quot;: &quot;$&#123;workspaceFolder&#125;/build/compile_commands.json&quot;</code></p>
+</li>
+<li><p>如何调试？</p>
+<p> 在CMakeLists.txt中添加<code>set(CMAKE_BUILD_TYPE Debug)</code>定义，编译时会加入调试flag，在launch.json的<code>program</code>中设置需要调试的程序位置，<code>F5</code>即可调试</p>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40008325/article/details/89298028">linux ubuntu安装glfw</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38196982/article/details/100748027">Ubuntu18.04安装glfw3.3</a></p>
+</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Graphics/">Graphics</a><a href="/tags/OpenGL/">OpenGL</a><a href="/tags/C/">C++</a><a href="/tags/Linux/">Linux</a><a href="/tags/Ubuntu/">Ubuntu</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://example.com/2021/02/21/vscode-cpp-dev-ubuntu/" data-title="Ubuntu搭建OpenGL/C++开发环境 | 我热爱学习" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/03/06/left-right-handed-conversion/" title="左右手坐标系下旋转平移的转换">
+  <strong>上一篇：</strong><br/>
+  <span>
+  左右手坐标系下旋转平移的转换</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%ACC-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">基本C++环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%ACOpenGL%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">基本OpenGL开发环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hello-Triangle"><span class="toc-number">3.</span> <span class="toc-text">Hello Triangle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debugging-Tricks"><span class="toc-number">4.</span> <span class="toc-text">Debugging Tricks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Graphics/" title="Graphics">Graphics<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/OpenGL/" title="OpenGL">OpenGL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m Summer Sun. <br/>
+			I&#39;m fine thank you, and you?</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xiasun" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
+		
+		<a href="/about" target="_blank" title="Summer">Summer</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
