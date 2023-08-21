@@ -85,6 +85,81 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/08/21/build-coturn-win/" title="在Windows下原生编译coturn（非cgywin）" itemprop="url">在Windows下原生编译coturn（非cgywin）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2023-08-21T15:07:37.000Z" itemprop="datePublished"> 发表于 2023-08-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在Windows上编译coturn，互联网上的绝大部分资料使用的是cgywin，存在性能问题，并与依赖项、coturn本身的代码版本强相关，实际编译困难。</p>
+<p>coturn项目从<a target="_blank" rel="noopener" href="https://github.com/coturn/coturn/releases/tag/4.6.2">4.6.2版本</a>开始原生支持了MSVC编译，并可以使用<a target="_blank" rel="noopener" href="https://vcpkg.io/en/getting-started">vcpkg</a>方便安装依赖项。此方法目前在互联网上几乎尚无关注，在此记录。</p>
+<ol>
+<li><p>安装vcpkg</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Microsoft/vcpkg.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化vcpkg</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\vcpkg\bootstrap-vcpkg.bat</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置vcpkg集成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\vcpkg\vcpkg integrate install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将vcpkg路径加入系统PATH环境变量，方便使用命令</p>
+</li>
+<li><p>进入coturn项目目录，执行cmake操作（注意将<code>E:\Programs\vcpkg</code>替换为你本地的vcpkg路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake.exe -G <span class="string">&quot;Visual Studio 16 2019&quot;</span> -A x64 -DVCPKG_TARGET_TRIPLET=x64-windows -DVCPKG_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE:STRING=<span class="string">&quot;E:\Programs\vcpkg\scripts\buildsystems\vcpkg.cmake&quot;</span> ..\</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用VisualStudio打开生成的sln，一键build即可，编译生成的coturn.exe位于./bin路径下</p>
+</li>
+</ol>
+<p>此方式可以避免cgywin的复杂配置和性能损失（系统调用、文件、进程通信等方面），应作为coturn 4.6.2版本后在windows编译的首选项。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Windows/">Windows</a><a href="/tags/Network/">Network</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/22/proj-mat/" title="绘制管线中的投影矩阵推导" itemprop="url">绘制管线中的投影矩阵推导</a>
   </h1>
   <p class="article-author">By
@@ -393,6 +468,10 @@
 			
 		
 			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/OpenGL/" title="OpenGL">OpenGL<sup>1</sup></a></li>
 			
 		
@@ -401,11 +480,15 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+				<li><a href="/tags/Windows/" title="Windows">Windows<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Network/" title="Network">Network<sup>1</sup></a></li>
 			
 		
 		</ul>
@@ -457,7 +540,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
 		
 		<a href="/about" target="_blank" title="Summer">Summer</a>
 		

@@ -4,27 +4,27 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>左右手坐标系下旋转平移的转换 | 我热爱学习</title>
+    <title>在Windows下原生编译coturn（非cgywin） | 我热爱学习</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Summer">
     
 
     
-    <meta name="description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
+    <meta name="description" content="在Windows上编译coturn，互联网上的绝大部分资料使用的是cgywin，存在性能问题，并与依赖项、coturn本身的代码版本强相关，实际编译困难。 coturn项目从4.6.2版本开始原生支持了MSVC编译，并可以使用vcpkg方便安装依赖项。此方法目前在互联网上几乎尚无关注，在此记录。  安装vcpkg 1git clone https:&#x2F;&#x2F;github.com&#x2F;Microsoft&#x2F;vc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="左右手坐标系下旋转平移的转换">
-<meta property="og:url" content="http://example.com/2021/03/06/left-right-handed-conversion/index.html">
+<meta property="og:title" content="在Windows下原生编译coturn（非cgywin）">
+<meta property="og:url" content="http://example.com/2023/08/21/build-coturn-win/index.html">
 <meta property="og:site_name" content="我热爱学习">
-<meta property="og:description" content="太长不看假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S &#x3D; \begin{bmatrix}    -1 &amp; 0 &amp; 0 \\    0 &amp; 1 &amp; 0 \\    0 &amp; 0 &amp; 1 \\\end{bmatrix}$，则有$$R &#x3D; S \cdot R^{’} \c">
+<meta property="og:description" content="在Windows上编译coturn，互联网上的绝大部分资料使用的是cgywin，存在性能问题，并与依赖项、coturn本身的代码版本强相关，实际编译困难。 coturn项目从4.6.2版本开始原生支持了MSVC编译，并可以使用vcpkg方便安装依赖项。此方法目前在互联网上几乎尚无关注，在此记录。  安装vcpkg 1git clone https:&#x2F;&#x2F;github.com&#x2F;Microsoft&#x2F;vc">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png">
-<meta property="article:published_time" content="2021-03-06T02:50:24.000Z">
-<meta property="article:modified_time" content="2022-05-22T06:04:56.707Z">
+<meta property="article:published_time" content="2023-08-21T15:07:37.000Z">
+<meta property="article:modified_time" content="2023-08-21T15:12:55.185Z">
 <meta property="article:author" content="Summer">
-<meta property="article:tag" content="Graphics">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="Network">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png">
 
     
     <link rel="alternative" href="/atom.xml" title="我热爱学习" type="application/atom+xml">
@@ -38,8 +38,6 @@
     
     
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/%02.css">
-<link rel="stylesheet" href="/.css">
 
 <!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
@@ -90,14 +88,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2021/03/06/left-right-handed-conversion/" title="左右手坐标系下旋转平移的转换" itemprop="url">左右手坐标系下旋转平移的转换</a>
+      <a href="/2023/08/21/build-coturn-win/" title="在Windows下原生编译coturn（非cgywin）" itemprop="url">在Windows下原生编译coturn（非cgywin）</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
 		
   <p class="article-time">
-    <time datetime="2021-03-06T02:50:24.000Z" itemprop="datePublished"> 发表于 2021-03-06</time>
+    <time datetime="2023-08-21T15:07:37.000Z" itemprop="datePublished"> 发表于 2023-08-21</time>
     
   </p>
 </header>
@@ -106,23 +104,31 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="toc-number">1.</span> <span class="toc-text">太长不看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E5%AF%BC"><span class="toc-number">2.</span> <span class="toc-text">推导</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>假设右（或左）手坐标系下的旋转矩阵和平移向量分别为$R$和$T$，左（或右）手坐标系下分别为$R^{’}$和$T^{’}$，假设$S = \begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}$，则有<br>$$<br>R = S \cdot R^{’} \cdot S \\<br>T = S \cdot T^{’}<br>$$</p>
-<h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><p>右手食指为Y轴正方向，中指为Z轴正方向，大拇指为X轴正方向，这样的坐标系为右手坐标系。右手换成左手则为左手坐标系。将一个坐标系的一个轴取反向，则改变了手性；两个轴取反向，则等价于绕第三轴旋转180度；将三个轴都取反向，则是前面两者的叠加，改变手性+旋转。</p>
-<p>左右手坐标系的转换在图形学开发中经常出现，例如OpenGL使用右手坐标系，Unity使用左手坐标系。下文所述右手坐标系即是OpenGL坐标系，左手坐标系即是Unity坐标系。</p>
-<img src="/2021/03/06/left-right-handed-conversion/left-right-handed-coords.png" class="" title="左右手坐标系示意图">
-
-<p>左手坐标系下有一个点$P_l=(x,y,z)^T$，则在右手坐标系下，该点应该表示为$P_r=(-x,y,z)^T$。</p>
-<p>假设空间中有变换矩阵<br>$$S=\begin{bmatrix}<br>    -1 &amp; 0 &amp; 0 \\<br>    0 &amp; 1 &amp; 0 \\<br>    0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}=S^{-1}$$</p>
-<p>则左右手坐标系下点的变换即可用$S$来表示，即<br>$$<br>P_l = S \cdot P_r \\<br>P_r = S \cdot P_l<br>$$</p>
-<p>假设空间中有旋转矩阵$R$和平移向量$T$，世界坐标系下有点$P_w$，对应相机坐标系下有点$P_c$，则有<br>$$<br>P_c = R \cdot P_w + T<br>$$</p>
-<p>假设$P_c$、$P_w$、$R$、$T$均定义在右手坐标系下，${P_c}^{’}$、${P_w}^{’}$、${R}^{’}$、${T}^{’}$分别为上述变量在左手坐标系下的定义，即<br>$$<br>P_c = R \cdot P_w + T \\<br>{P_c}^{’} = {R}^{’} \cdot {P_w}^{’} + {T}^{’}<br>$$</p>
-<p>左右手坐标系下位置的变换我们已经知道，即${P}^{’}=S \cdot P$，则有<br>$$<br>{P_c}^{’} = {R}^{’} \cdot {P_w}^{’} + {T}^{’} \rightarrow \\<br>S \cdot {P_c} = {R}^{’} \cdot S \cdot {P_w} + {T}^{’} \rightarrow \\<br>{P_c} = {S}^{-1} \cdot {R}^{’} \cdot S \cdot {P_w} + {S}^{-1} \cdot {T}^{’}<br>$$</p>
-<p>已知右手坐标系下$P_c = R \cdot P_w + T$，故有左右手坐标系下旋转矩阵和平移向量的的转换<br>$$<br>R = S^{-1} \cdot R^{’} \cdot S = S \cdot R^{’} \cdot S \\<br>T = S^{-1} \cdot {T}^{’} = S \cdot {T}^{’}<br>$$</p>
-<p>以上</p>
+		<p>在Windows上编译coturn，互联网上的绝大部分资料使用的是cgywin，存在性能问题，并与依赖项、coturn本身的代码版本强相关，实际编译困难。</p>
+<p>coturn项目从<a target="_blank" rel="noopener" href="https://github.com/coturn/coturn/releases/tag/4.6.2">4.6.2版本</a>开始原生支持了MSVC编译，并可以使用<a target="_blank" rel="noopener" href="https://vcpkg.io/en/getting-started">vcpkg</a>方便安装依赖项。此方法目前在互联网上几乎尚无关注，在此记录。</p>
+<ol>
+<li><p>安装vcpkg</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Microsoft/vcpkg.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化vcpkg</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\vcpkg\bootstrap-vcpkg.bat</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置vcpkg集成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\vcpkg\vcpkg integrate install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将vcpkg路径加入系统PATH环境变量，方便使用命令</p>
+</li>
+<li><p>进入coturn项目目录，执行cmake操作（注意将<code>E:\Programs\vcpkg</code>替换为你本地的vcpkg路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake.exe -G <span class="string">&quot;Visual Studio 16 2019&quot;</span> -A x64 -DVCPKG_TARGET_TRIPLET=x64-windows -DVCPKG_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE:STRING=<span class="string">&quot;E:\Programs\vcpkg\scripts\buildsystems\vcpkg.cmake&quot;</span> ..\</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用VisualStudio打开生成的sln，一键build即可，编译生成的coturn.exe位于./bin路径下</p>
+</li>
+</ol>
+<p>此方式可以避免cgywin的复杂配置和性能损失（系统调用、文件、进程通信等方面），应作为coturn 4.6.2版本后在windows编译的首选项。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -131,7 +137,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Graphics/">Graphics</a>
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Windows/">Windows</a><a href="/tags/Network/">Network</a>
   </div>
 
 </div>
@@ -140,7 +146,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://example.com/2021/03/06/left-right-handed-conversion/" data-title="左右手坐标系下旋转平移的转换 | 我热爱学习" data-tsina="" class="share clearfix">
+	  <div data-url="http://example.com/2023/08/21/build-coturn-win/" data-title="在Windows下原生编译coturn（非cgywin） | 我热爱学习" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,19 +159,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2022/05/22/proj-mat/" title="绘制管线中的投影矩阵推导">
-  <strong>上一篇：</strong><br/>
-  <span>
-  绘制管线中的投影矩阵推导</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2021/02/21/vscode-cpp-dev-ubuntu/"  title="Ubuntu搭建OpenGL/C++开发环境">
+<a href="/2022/05/22/proj-mat/"  title="绘制管线中的投影矩阵推导">
  <strong>下一篇：</strong><br/> 
- <span>Ubuntu搭建OpenGL/C++开发环境
+ <span>绘制管线中的投影矩阵推导
 </span>
 </a>
 </div>
@@ -182,7 +180,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="toc-number">1.</span> <span class="toc-text">太长不看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E5%AF%BC"><span class="toc-number">2.</span> <span class="toc-text">推导</span></a></li></ol>
+ 
  
   </div>
 
