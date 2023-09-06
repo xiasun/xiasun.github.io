@@ -85,6 +85,113 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/09/06/unreal-modules/" title="Unreal 模块设计（Modules）" itemprop="url">Unreal 模块设计（Modules）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2023-09-06T15:42:39.000Z" itemprop="datePublished"> 发表于 2023-09-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Unreal对C++代码有一套构建系统UBT（Unreal Build Tools），从引擎自身到用户的代码，都由UBT以Module为单位进行构建。一个Module相当于一个库，被UBT构建后，在运行时被加载和使用。UBT相当于UE的一套CMake+编译系统，一来隔离平台差异，二来用统一的方式来管理依赖比较优雅。下面罗列一些Unreal Module的特点（后面称Module为模块）。</p>
+<h1 id="结构和构建"><a href="#结构和构建" class="headerlink" title="结构和构建"></a>结构和构建</h1><p>模块的根目录有一个配置文件，名为YourModuleName.Build.cs，基本内容如下，声明了</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 声明预编译头的用法</span></span><br><span class="line">PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;	</span><br><span class="line"><span class="comment">// 声明公开依赖的其它模块，这里依赖了一些引擎的基本模块</span></span><br><span class="line">PublicDependencyModuleNames.AddRange(<span class="keyword">new</span> <span class="keyword">string</span>[] &#123; <span class="string">&quot;Core&quot;</span>, <span class="string">&quot;CoreUObject&quot;</span>, <span class="string">&quot;Engine&quot;</span>, <span class="string">&quot;InputCore&quot;</span> &#125;);</span><br><span class="line"><span class="comment">// 声明私有依赖的其它模块</span></span><br><span class="line">PrivateDependencyModuleNames.AddRange(<span class="keyword">new</span> <span class="keyword">string</span>[] &#123;  &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+
+<p>构建时，UBT基于这些依赖关系去引用其它模块的头文件，并链接它们的代码，进行编译。Unreal也提供了工具（右键uproject文件）来生成对应IDE的工程文件（比如.sln或.xcodeproj），方便用IDE打开。</p>
+<h1 id="预编译头（PCHs）"><a href="#预编译头（PCHs）" class="headerlink" title="预编译头（PCHs）"></a>预编译头（PCHs）</h1><p>预编译头是为了编译性能而设计的机制，将<strong>常用的、通用的、不经常变的</strong>头预先编译一次，后续只要不改变就不重新编译，从而提升编译性能。</p>
+<p>用户定义模块时，可以选择创建自己的PCH，使用依赖模块的PCH，或不使用PCH。</p>
+<p>上面的Build.cs文件中有定义<code>PCHUsage</code>，创建一个模块时的默认选项是<code>UseExplicitOrSharedPCHs</code>，绝大部分模块都使用<code>UseExplicitOrSharedPCHs</code>或<code>NoPCHs</code>即可。</p>
+<p>所谓使用SharedPCHs，就是由Engine在依赖的诸多模块中，选择一个最合适的模块所定义的预编译头。而Explicit的，就是使用本模块显式定义的预编译头</p>
+<p>用户可以在一个模块的Build.cs中定义<code>PrivatePCHHeaderFile = &quot;xxx.h&quot;</code>或<code>SharedPCHHeaderFile = xxx.h</code>。</p>
+<ul>
+<li><code>PrivatePCHHeaderFile</code>是为当前模块指定的预编译头</li>
+<li><code>SharedPCHHeaderFile</code>则是为其它依赖本模块的其它模块提供的可选预编译头，不是给本模块用的</li>
+</ul>
+<h1 id="暴露性（给其它模块调用）"><a href="#暴露性（给其它模块调用）" class="headerlink" title="暴露性（给其它模块调用）"></a>暴露性（给其它模块调用）</h1><p>模块的根目录通常有Private和Public两个路径，想要暴露给其它模块使用的代码，要放在Public中，但还不够，需要对代码做进一步定义。</p>
+<p>在UCLASS声明中添加<code>MinimalAPI</code>，可以允许该类在其它模块代码中被用于类型转换，或调用inline的函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UCLASS(Blueprintable, MinimalAPI)</span><br></pre></td></tr></table></figure>
+
+<p>在成员变量/函数前声明本模块API字样，可以允许其它模块代码使用此成员变量/函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HEHE_API <span class="keyword">void</span> <span class="title">DoSomething</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>在类名前声明本模块API字样，可以允许整个类被其它模块的代码使用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HEHE_API</span> <span class="title">AHeheActor</span> :</span> <span class="keyword">public</span> AActor</span><br></pre></td></tr></table></figure>
+
+<h1 id="可见性（public-private）"><a href="#可见性（public-private）" class="headerlink" title="可见性（public/private）"></a>可见性（public/private）</h1><p>一个模块要使用另一个模块，需要：</p>
+<ul>
+<li>引用其头文件</li>
+<li>在Build.cs文件中的依赖中添加该模块（<code>PublicDependencyModuleNames</code>或<code>PrivateDependencyModuleNames</code>）</li>
+</ul>
+<p>除了C++本身的可见性，UBT在处理依赖时，也有一些可见性规则。</p>
+<ul>
+<li>单层依赖，一个模块A依赖另一个模块B，UBT在构建A模块时会去包含B模块的头文件，并链接B模块的代码</li>
+<li>多层依赖，模块A以依赖模块B，模块B以<strong>private</strong>依赖模块C，A并不会直接包含C的头文件或链接C的代码</li>
+<li>多层依赖，模块A以依赖模块B，模块B以<strong>public</strong>依赖模块C，A会直接包含C的头文件，但不会链接C的代码</li>
+</ul>
+<p>所以在实际设计模块代码时，将只有本模块才使用的依赖项，作为<code>PrivateDependencyModuleNames</code>依赖，如果依赖项可能被本模块的用户使用，就应该加入到<code>PublicDependencyModuleNames</code>。</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>要让UE引擎识别模块，需要在源码的任意处声明<code>IMPLEMENT_MODULE</code>、<code>IMPLEMENT_GAME_MODULE</code>或<code>IMPLEMENT_PRIMARY_GAME_MODULE</code>，例如默认的C++游戏工程会自动生成一个<code>模块名.cpp</code>，里面定义了<code>IMPLEMENT_PRIMARY_GAME_MODULE</code>。一个游戏工程里通常只有一个一个<code>IMPLEMENT_PRIMARY_GAME_MODULE</code>。</p>
+<p>模块可以定义一个实现类，通过<code>IMPLEMENT_MODULE</code>方法注册给引擎，这个类中可以实现一些有用的回调，比如<code>StartupModule</code>和<code>StartupModule</code>如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Hehe.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FHeheModule</span> :</span> <span class="keyword">public</span> IModuleInterface</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StartupModule</span><span class="params">()</span> <span class="keyword">override</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StartupModule</span><span class="params">()</span> <span class="keyword">override</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Hehe.cpp</span></span><br><span class="line">IMPLEMENT_MODULE(FHeheModule, ModuleTest);</span><br></pre></td></tr></table></figure>
+
+<p>其它模块也可以调用实现类的成员函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FModuleManager::Get().LoadModuleChecked&lt;FHeheModule&gt;(TEXT(<span class="string">&quot;Hehe&quot;</span>)).DoSomething();</span><br></pre></td></tr></table></figure>
+
+<p>一个模块如果依赖其它GameModule，它就应该被声明为GameModule，GameModule的好处是热更新。如果希望做一个功能相对独立的，可以发布给其它人使用的模块，则可以定义为普通Module。定义为GameModule的模块如果重载了<code>FDefaultModuleImpl</code>实现类，还需要定义<code>IsGameModule()</code>方法来返回<code>true</code>。</p>
+<h1 id="重要属性"><a href="#重要属性" class="headerlink" title="重要属性"></a>重要属性</h1><p>模块要么在.uproject中加载，要么在.uplugin中加载。在这两个文件中，可以定义一些模块的属性：</p>
+<ul>
+<li><code>Type</code>：默认是<code>Runtime</code>，除了独立运行都可以，可以进一步限制模块的使用场景，仅编辑器或者仅服务器/客户端等，详见<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/en-US/API/Runtime/Projects/EHostType__Type/">EHostType::Type</a></li>
+<li><code>LoadingPhase</code>：模块的加载阶段，默认是<code>Default</code>是在引擎初始化期间，GamePlay模块加载完后加载，详见<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.2/en-US/API/Runtime/Projects/ELoadingPhase__Type/">ELoadingPhase::Type</a></li>
+<li><code>IncludelistPlatforms</code> / <code>ExcludelistPlatforms</code>： Win32, Win64, Mac, Linux, Android, IOS等</li>
+<li><code>IncludelistTargets</code> / <code>ExcludelistTargets</code>：Game, Server, Client, Editor, Program等</li>
+<li><code>IncludelistTargetConfigurations</code> / <code>ExcludelistTargetConfigurations</code>：ebug, DebugGame, Development, Shipping, Test等</li>
+</ul>
+<p>详细属性列表可见<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.2/en-US/unreal-engine-modules/">Unreal Engine Modules</a>。上述的Include/Exclude是UE5的属性，在UE4中叫做Whitelist/Blacklist。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.2/en-US/unreal-engine-modules/">Unreal Engine Modules</a></li>
+<li><a target="_blank" rel="noopener" href="https://ari.games/">ari.games</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1rSFFQk7RxNAHevROfVvUNviUfIntLkO_HpdvzHLkNEs/view">UE4 Modules by Ari Arnbjörnsson</a></li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/08/21/build-coturn-win/" title="在Windows下原生编译coturn（非cgywin）" itemprop="url">在Windows下原生编译coturn（非cgywin）</a>
   </h1>
   <p class="article-author">By
