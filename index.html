@@ -85,6 +85,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/09/17/unreal-aws-sdk-cpp/" title="Unreal使用aws-sdk-cpp工程交叉编译链接错误" itemprop="url">Unreal使用aws-sdk-cpp工程交叉编译链接错误</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2023-09-17T13:09:52.000Z" itemprop="datePublished"> 发表于 2023-09-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h1><p>尝试在UE5中使用本地编译的aws-sdk-cpp，并需要在UE的windows编辑器里，交叉编译linux版本。</p>
+<p>编译aws-sdk-cpp的方法参照了<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/sdk-for-cpp/v1/developer-guide/setup-linux.html">Build the AWS SDK for C++ on Linux/macOS</a>，在UE项目中引入库的方法，参照了<a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/gametech/how-to-integrate-the-aws-c-sdk-with-unreal-engine/">How to Integrate the AWS C++ SDK with Unreal Engine</a>。</p>
+<p>在Windows编辑器中编译正常，打包Windows也正常，但交叉编译linux版本时出现链接错误，提示<code>undefined symbol: Aws::Utils::DateTime::DateTime</code>，如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[2023.09.14-01.59.44:568][655]UATHelper: Packaging (Linux): ld.lld: error: undefined symbol: Aws::Utils::DateTime::DateTime(std::__1::chrono::time_point&lt;std::__1::chrono::system_clock, std::__1::chrono::duration&lt;long long, std::__1::ratio&lt;1l, 1000000l&gt; &gt; &gt; const&amp;)</span><br><span class="line">[2023.09.14-01.59.44:568][655]UATHelper: Packaging (Linux): &gt;&gt;&gt; referenced by AWSCredentials.h:36 (D:&#x2F;Projects&#x2F;DT&#x2F;MapEditorUE&#x2F;ThirdParty&#x2F;AWS&#x2F;Include\aws&#x2F;core&#x2F;auth\AWSCredentials.h:36)</span><br></pre></td></tr></table></figure>
+
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>尝试了各种动态库，静态库，均报同样错误。</p>
+<p>最终发现，编译aws-sdk-cpp时，需要使用<code>clang</code>，而非<code>gcc</code>，因为Unreal的交叉编译使用的就是<code>clang</code>（似乎还是定制过的），一些c++标准的函数符号似乎存在差异，导致了这个问题。</p>
+<p>使用<code>clang</code>编译可在<code>cmake</code>前用环境变量指定，并需要设定<code>-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</code>，否则找不到libc++库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定使用clang作为编译器</span></span><br><span class="line"><span class="built_in">export</span> CXX=/path/to/clang++</span><br><span class="line"><span class="built_in">export</span> CC=/path/to/clang</span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake时指定-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</span></span><br><span class="line">cmake ../../aws-sdk-cpp -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/<span class="built_in">local</span>/ -DCMAKE_INSTALL_PREFIX=/usr/<span class="built_in">local</span>/ -DBUILD_SHARED_LIBS=ON -DCMAKE_CXX_FLAGS=<span class="string">&quot;-stdlib=libc++&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># make</span></span><br><span class="line">make -j 8</span><br></pre></td></tr></table></figure>
+
+<h1 id="TIP"><a href="#TIP" class="headerlink" title="TIP"></a>TIP</h1><p>如果不设定<code>-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</code>，<code>cmake</code>可能会报如下错误，因为<code>clang</code>默认不会取找<code>gcc</code>的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at &#x2F;usr&#x2F;local&#x2F;share&#x2F;cmake-3.22&#x2F;Modules&#x2F;CMakeTestCXXCompiler.cmake:62 (message):</span><br><span class="line">  The C++ compiler</span><br><span class="line"></span><br><span class="line">    &quot;&#x2F;usr&#x2F;bin&#x2F;clang++&quot;</span><br><span class="line"></span><br><span class="line">  is not able to compile a simple test program.</span><br><span class="line"></span><br><span class="line">  It fails with the following output:</span><br><span class="line"></span><br><span class="line">    Change Dir: &#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp</span><br><span class="line">   </span><br><span class="line">    Run Build Command(s):&#x2F;bin&#x2F;make -f Makefile cmTC_fba77&#x2F;fast &amp;&amp; &#x2F;bin&#x2F;make  -f CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build.make CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build</span><br><span class="line">    make[1]: Entering directory &#39;&#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#39;</span><br><span class="line">    Building CXX object CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;clang++    -MD -MT CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -MF CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o.d -o CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -c &#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#x2F;testCXXCompiler.cxx</span><br><span class="line">    Linking CXX executable cmTC_fba77</span><br><span class="line">    &#x2F;usr&#x2F;local&#x2F;bin&#x2F;cmake -E cmake_link_script CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;link.txt --verbose&#x3D;1</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;clang++ -rdynamic CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -o cmTC_fba77</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;ld: cannot find -lstdc++</span><br><span class="line">    clang: error: linker command failed with exit code 1 (use -v to see invocation)</span><br><span class="line">    make[1]: *** [CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build.make:100: cmTC_fba77] Error 1</span><br><span class="line">    make[1]: Leaving directory &#39;&#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#39;</span><br><span class="line">    make: *** [Makefile:127: cmTC_fba77&#x2F;fast] Error 2</span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">  CMake will not be able to correctly generate this project.</span><br><span class="line">Call Stack (most recent call first):</span><br><span class="line">  CMakeLists.txt:152 (project)</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/09/06/unreal-modules/" title="Unreal 模块设计（Modules）" itemprop="url">Unreal 模块设计（Modules）</a>
   </h1>
   <p class="article-author">By

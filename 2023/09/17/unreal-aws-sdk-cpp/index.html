@@ -1,0 +1,501 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Unreal使用aws-sdk-cpp工程交叉编译链接错误 | 我热爱学习</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Summer">
+    
+
+    
+    <meta name="description" content="问题来源尝试在UE5中使用本地编译的aws-sdk-cpp，并需要在UE的windows编辑器里，交叉编译linux版本。 编译aws-sdk-cpp的方法参照了Build the AWS SDK for C++ on Linux&#x2F;macOS，在UE项目中引入库的方法，参照了How to Integrate the AWS C++ SDK with Unreal Engine。 在Windows编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unreal使用aws-sdk-cpp工程交叉编译链接错误">
+<meta property="og:url" content="http://example.com/2023/09/17/unreal-aws-sdk-cpp/index.html">
+<meta property="og:site_name" content="我热爱学习">
+<meta property="og:description" content="问题来源尝试在UE5中使用本地编译的aws-sdk-cpp，并需要在UE的windows编辑器里，交叉编译linux版本。 编译aws-sdk-cpp的方法参照了Build the AWS SDK for C++ on Linux&#x2F;macOS，在UE项目中引入库的方法，参照了How to Integrate the AWS C++ SDK with Unreal Engine。 在Windows编">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-17T13:09:52.000Z">
+<meta property="article:modified_time" content="2023-09-17T13:10:54.886Z">
+<meta property="article:author" content="Summer">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="我热爱学习" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.2"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="我热爱学习" title="我热爱学习"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="我热爱学习">我热爱学习</a></h1>
+				<h2 class="blog-motto">学习使我快乐</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:example.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2023/09/17/unreal-aws-sdk-cpp/" title="Unreal使用aws-sdk-cpp工程交叉编译链接错误" itemprop="url">Unreal使用aws-sdk-cpp工程交叉编译链接错误</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Summer" target="_blank" itemprop="author">Summer</a>
+		
+  <p class="article-time">
+    <time datetime="2023-09-17T13:09:52.000Z" itemprop="datePublished"> 发表于 2023-09-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%9D%A5%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">问题来源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TIP"><span class="toc-number">3.</span> <span class="toc-text">TIP</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h1><p>尝试在UE5中使用本地编译的aws-sdk-cpp，并需要在UE的windows编辑器里，交叉编译linux版本。</p>
+<p>编译aws-sdk-cpp的方法参照了<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/sdk-for-cpp/v1/developer-guide/setup-linux.html">Build the AWS SDK for C++ on Linux/macOS</a>，在UE项目中引入库的方法，参照了<a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/gametech/how-to-integrate-the-aws-c-sdk-with-unreal-engine/">How to Integrate the AWS C++ SDK with Unreal Engine</a>。</p>
+<p>在Windows编辑器中编译正常，打包Windows也正常，但交叉编译linux版本时出现链接错误，提示<code>undefined symbol: Aws::Utils::DateTime::DateTime</code>，如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[2023.09.14-01.59.44:568][655]UATHelper: Packaging (Linux): ld.lld: error: undefined symbol: Aws::Utils::DateTime::DateTime(std::__1::chrono::time_point&lt;std::__1::chrono::system_clock, std::__1::chrono::duration&lt;long long, std::__1::ratio&lt;1l, 1000000l&gt; &gt; &gt; const&amp;)</span><br><span class="line">[2023.09.14-01.59.44:568][655]UATHelper: Packaging (Linux): &gt;&gt;&gt; referenced by AWSCredentials.h:36 (D:&#x2F;Projects&#x2F;DT&#x2F;MapEditorUE&#x2F;ThirdParty&#x2F;AWS&#x2F;Include\aws&#x2F;core&#x2F;auth\AWSCredentials.h:36)</span><br></pre></td></tr></table></figure>
+
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>尝试了各种动态库，静态库，均报同样错误。</p>
+<p>最终发现，编译aws-sdk-cpp时，需要使用<code>clang</code>，而非<code>gcc</code>，因为Unreal的交叉编译使用的就是<code>clang</code>（似乎还是定制过的），一些c++标准的函数符号似乎存在差异，导致了这个问题。</p>
+<p>使用<code>clang</code>编译可在<code>cmake</code>前用环境变量指定，并需要设定<code>-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</code>，否则找不到libc++库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定使用clang作为编译器</span></span><br><span class="line"><span class="built_in">export</span> CXX=/path/to/clang++</span><br><span class="line"><span class="built_in">export</span> CC=/path/to/clang</span><br><span class="line"></span><br><span class="line"><span class="comment"># cmake时指定-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</span></span><br><span class="line">cmake ../../aws-sdk-cpp -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/<span class="built_in">local</span>/ -DCMAKE_INSTALL_PREFIX=/usr/<span class="built_in">local</span>/ -DBUILD_SHARED_LIBS=ON -DCMAKE_CXX_FLAGS=<span class="string">&quot;-stdlib=libc++&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># make</span></span><br><span class="line">make -j 8</span><br></pre></td></tr></table></figure>
+
+<h1 id="TIP"><a href="#TIP" class="headerlink" title="TIP"></a>TIP</h1><p>如果不设定<code>-DCMAKE_CXX_FLAGS=&quot;-stdlib=libc++&quot;</code>，<code>cmake</code>可能会报如下错误，因为<code>clang</code>默认不会取找<code>gcc</code>的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at &#x2F;usr&#x2F;local&#x2F;share&#x2F;cmake-3.22&#x2F;Modules&#x2F;CMakeTestCXXCompiler.cmake:62 (message):</span><br><span class="line">  The C++ compiler</span><br><span class="line"></span><br><span class="line">    &quot;&#x2F;usr&#x2F;bin&#x2F;clang++&quot;</span><br><span class="line"></span><br><span class="line">  is not able to compile a simple test program.</span><br><span class="line"></span><br><span class="line">  It fails with the following output:</span><br><span class="line"></span><br><span class="line">    Change Dir: &#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp</span><br><span class="line">   </span><br><span class="line">    Run Build Command(s):&#x2F;bin&#x2F;make -f Makefile cmTC_fba77&#x2F;fast &amp;&amp; &#x2F;bin&#x2F;make  -f CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build.make CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build</span><br><span class="line">    make[1]: Entering directory &#39;&#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#39;</span><br><span class="line">    Building CXX object CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;clang++    -MD -MT CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -MF CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o.d -o CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -c &#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#x2F;testCXXCompiler.cxx</span><br><span class="line">    Linking CXX executable cmTC_fba77</span><br><span class="line">    &#x2F;usr&#x2F;local&#x2F;bin&#x2F;cmake -E cmake_link_script CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;link.txt --verbose&#x3D;1</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;clang++ -rdynamic CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;testCXXCompiler.cxx.o -o cmTC_fba77</span><br><span class="line">    &#x2F;usr&#x2F;bin&#x2F;ld: cannot find -lstdc++</span><br><span class="line">    clang: error: linker command failed with exit code 1 (use -v to see invocation)</span><br><span class="line">    make[1]: *** [CMakeFiles&#x2F;cmTC_fba77.dir&#x2F;build.make:100: cmTC_fba77] Error 1</span><br><span class="line">    make[1]: Leaving directory &#39;&#x2F;home&#x2F;SENSETIME&#x2F;sunxia&#x2F;Develop&#x2F;Programs&#x2F;aws-sdk-cpp-build&#x2F;test&#x2F;CMakeFiles&#x2F;CMakeTmp&#39;</span><br><span class="line">    make: *** [Makefile:127: cmTC_fba77&#x2F;fast] Error 2</span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">  CMake will not be able to correctly generate this project.</span><br><span class="line">Call Stack (most recent call first):</span><br><span class="line">  CMakeLists.txt:152 (project)</span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://example.com/2023/09/17/unreal-aws-sdk-cpp/" data-title="Unreal使用aws-sdk-cpp工程交叉编译链接错误 | 我热爱学习" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2023/09/06/unreal-modules/"  title="Unreal 模块设计（Modules）">
+ <strong>下一篇：</strong><br/> 
+ <span>Unreal 模块设计（Modules）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%9D%A5%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">问题来源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TIP"><span class="toc-number">3.</span> <span class="toc-text">TIP</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Graphics/" title="Graphics">Graphics<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Network/" title="Network">Network<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Windows/" title="Windows">Windows<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/OpenGL/" title="OpenGL">OpenGL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ubuntu/" title="Ubuntu">Ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/UE/" title="UE">UE<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m Summer Sun. <br/>
+			I&#39;m fine thank you, and you?</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/xiasun" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="Summer">Summer</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
